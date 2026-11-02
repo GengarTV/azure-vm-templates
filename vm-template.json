@@ -13,26 +13,7 @@
         "francecentral",
         "switzerlandnorth",
         "spaincentral"
-      ],
-      "metadata": {
-        "description": "Allowed Azure deployment region"
-      }
-    },
-    "adminUsername": {
-      "type": "string",
-      "defaultValue": "azureuser"
-    },
-    "adminPublicKey": {
-      "type": "securestring",
-      "metadata": {
-        "description": "SSH public key"
-      }
-    },
-    "sshSourceAddressPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Your public IP address in CIDR format, e.g. 203.0.113.10/32"
-      }
+      ]
     },
     "vmSize": {
       "type": "string",
@@ -56,21 +37,7 @@
       "name": "[variables('nsgName')]",
       "location": "[parameters('location')]",
       "properties": {
-        "securityRules": [
-          {
-            "name": "Allow-SSH",
-            "properties": {
-              "priority": 1000,
-              "protocol": "Tcp",
-              "access": "Allow",
-              "direction": "Inbound",
-              "sourceAddressPrefix": "[parameters('sshSourceAddressPrefix')]",
-              "sourcePortRange": "*",
-              "destinationAddressPrefix": "*",
-              "destinationPortRange": "22"
-            }
-          }
-        ]
+        "securityRules": []
       }
     },
     {
@@ -167,17 +134,9 @@
         },
         "osProfile": {
           "computerName": "[variables('vmName')]",
-          "adminUsername": "[parameters('adminUsername')]",
+          "adminUsername": "azureuser",
           "linuxConfiguration": {
-            "disablePasswordAuthentication": true,
-            "ssh": {
-              "publicKeys": [
-                {
-                  "path": "[format('/home/{0}/.ssh/authorized_keys', parameters('adminUsername'))]",
-                  "keyData": "[parameters('adminPublicKey')]"
-                }
-              ]
-            }
+            "disablePasswordAuthentication": true
           }
         },
         "networkProfile": {
@@ -195,10 +154,6 @@
     "vmName": {
       "type": "string",
       "value": "[variables('vmName')]"
-    },
-    "publicIPAddress": {
-      "type": "string",
-      "value": "[reference(resourceId('Microsoft.Network/publicIPAddresses', variables('publicIpName')), '2024-05-01').ipAddress]"
     },
     "location": {
       "type": "string",
